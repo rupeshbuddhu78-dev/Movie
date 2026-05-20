@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pickle
 import pandas as pd
-import requests  # Naya import TMDB API se posters mangwane ke liye
+import requests  # TMDB API se data mangwane ke liye
 
 app = FastAPI(title="Movie Recommender API")
 
@@ -47,6 +47,17 @@ def fetch_poster_and_details(movie_name):
 @app.get("/")
 def home():
     return {"message": "Movie Recommendation API is running successfully! 🚀"}
+
+# 🚀 NAYA ENDPOINT: VPN bypass wala (Trending movies ke liye)
+@app.get("/trending")
+def get_trending_movies():
+    """Ye function bina VPN ke Render ke server se trending movies nikalega"""
+    url = f"https://api.themoviedb.org/3/trending/movie/week?api_key={TMDB_API_KEY}"
+    try:
+        response = requests.get(url).json()
+        return response.get("results", [])
+    except Exception as e:
+        return {"error": str(e)}
 
 # Asli Recommendation wala API (Ab Posters aur Details ke saath)
 @app.get("/recommend")
